@@ -1,0 +1,108 @@
+<div class="container">
+  <div class="column">
+    <div class="row">
+      <div class="jumbotron bg-white">
+        <h1 class="display-3">Pool DAI</h1>
+        <p class="lead">A protocol enabling people to pool money together, lend it out, and donate the interest to a
+          cause.</p>
+        <p class="lead">
+          Powered by Ethereum,
+          <a target="_blank" href="https://compound.finance/">Compound</a>,
+          <a target="_blank" href="https://www.makerdao.com/">MakerDAO</a>,
+          and <a target="_blank" href="https://kyber.network/">Kyber Network</a>.
+        </p>
+        <hr class="my-4">
+
+        <div class="row justify-content-center">
+          <div class="col-sm">
+            <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+              <div class="card-header">Step 1: Create Pool</div>
+              <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's
+                  content.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm">
+            <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+              <div class="card-header">Step 2: Put In Money</div>
+              <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's
+                  content.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm">
+            <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+              <div class="card-header">Step 3: No-loss Auto Donation!</div>
+              <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                  card's
+                  content.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <!-- Title -->
+            <h4 class="card-header-title" i18n>
+              Pools
+            </h4>
+          </div>
+          <div class="col-auto">
+            <!-- Refresh -->
+            <button type="button" class="btn btn-primary btn-sm" (click)="refresh()">
+              <span *ngIf="!isLoading">
+                Refresh
+              </span>
+              <span *ngIf="isLoading">
+                Loading...
+              </span>
+            </button>
+          </div>
+        </div> <!-- / .row -->
+      </div>
+
+      <div class="card-header">
+        <div class="row">
+          <div class="col">
+            <input type="search" class="form-control search"
+              (keyup)="filterTable($event,'pool-table',0)" placeholder="Type to search...">
+          </div>
+        </div> <!-- / .row -->
+      </div>
+
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Pool Size</th>
+            <th scope="col">Interest Donated So Far</th>
+          </tr>
+        </thead>
+        <tbody id="pool-table">
+          <tr *ngFor="let pool of poolList">
+            <td>
+              <img class="avatar" src={{handleLogoUrl(pool.logoUrl)}} /> {{pool.name}}
+            </td>
+            <td>
+              {{toBigNumber(pool.totalSupply).toFormat(6)}} DAI
+            </td>
+            <td>
+              {{toBigNumber(pool.totalInterestWithdrawn).toFormat(6)}} DAI
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
