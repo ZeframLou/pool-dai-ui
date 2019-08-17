@@ -1,1 +1,83 @@
-<p>create works!</p>
+<div class="container">
+  <div class="row justify-content-center mt-3">
+    <div class="col">
+      <div class="card text-white bg-dark mb-3">
+        <div class="card-header">
+          <h1>Create Pool</h1>
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            Create a pool that donates to your favorite charity, project, or content creator. Or your mom,
+            anyone really.
+          </p>
+          <p class="card-text">
+            It's completely free (other than the Ethereum gas cost) and open to everyone.
+          </p>
+          <hr class="my-4">
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputName">
+              Beneficiary Name
+            </label>
+            <input [(ngModel)]="beneficiaryName" type="text" class="form-control" placeholder="Ethereum Foundation" id="inputName"
+              aria-describedby="helpName">
+            <small id="helpName" class="form-text">The name of the charity/person/project who would receive
+              the donation.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputDescription">
+              Beneficiary Description
+            </label>
+            <textarea [(ngModel)]="beneficiaryDescription" class="form-control" id="inputDescription"
+              placeholder="The Ethereum Foundation is a non-profit that leads Ethereum R&D and organizes community events."
+              rows="3"></textarea>
+            <small id="helpDescription" class="form-text">Description of the beneficiary.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputAddress">
+              Beneficiary's Ethereum Account
+            </label>
+            <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control" placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275"
+              id="inputAddress">
+            <small id="helpAddress" class="form-text">The Ethereum account that will receive the donations.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputSymbol">
+              Proof For Beneficiary's Ethereum Address
+            </label>
+            <input [(ngModel)]="accountProof" type="text" class="form-control" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              id="inputProof">
+            <small id="helpProof" class="form-text">Proof that the given Ethereum account does belong to the claimed
+              beneficiary. Example: link to a Tweet by the beneficiary's official Twitter account stating that the
+              account belongs to them.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputSymbol">
+              Token Symbol
+            </label>
+            <input [(ngModel)]="tokenSymbol" type="text" class="form-control" placeholder="pDAI-EF" id="inputSymbol">
+            <small id="helpSymbol" class="form-text">Symbol of the ERC20 token used for redeeming deposits. Preferrably
+              in the form "pDAI-xxx".</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputLogo">
+              Logo Link
+            </label>
+            <input [(ngModel)]="logoLink" type="text" class="form-control" placeholder="https://i.imgur.com/bxUaTzg.jpg" id="inputLogo">
+            <small id="helpLogo" class="form-text">Link to the beneficiary's logo. The logo should be
+              square/circular.</small>
+          </div>
+
+          <button type="button" class="btn btn-success btn-lg" (click)="submitMetadataToIPFS()">
+            Upload metadata to IPFS
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

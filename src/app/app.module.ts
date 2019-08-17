@@ -8,6 +8,7 @@ import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 import { MainComponent } from './main/main.component';
 import { CreateComponent } from './create/create.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { CreateComponent } from './create/create.component';
     AppRoutingModule,
     NgbModule,
     GraphQLModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

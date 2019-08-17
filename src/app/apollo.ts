@@ -3,6 +3,7 @@ import { OnDestroy } from '@angular/core';
 import { BigNumber } from 'bignumber.js';
 import { isUrl } from 'is-url';
 import { isUndefined } from 'util';
+import * as sanitizeHtml from 'sanitize-html';
 
 export class ApolloEnabled implements OnDestroy {
   querySubscription: Subscription;
@@ -40,6 +41,11 @@ export class ApolloEnabled implements OnDestroy {
   }
 
   handleLogoUrl(logoUrl) {
-    return !isUndefined(logoUrl) && logoUrl.length > 0 && isUrl(logoUrl) ? logoUrl : this.defaultLogoUrl;
+    return !isUndefined(logoUrl) && logoUrl.length > 0 && isUrl(logoUrl) ? this.sanitize(logoUrl) : this.defaultLogoUrl;
+  }
+
+  sanitize(dirty) {
+    let clean = sanitizeHtml(dirty);
+    return clean;
   }
 }
