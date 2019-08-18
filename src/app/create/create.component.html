@@ -19,8 +19,8 @@
             <label class="col-form-label" for="inputName">
               Beneficiary Name
             </label>
-            <input [(ngModel)]="beneficiaryName" type="text" class="form-control" placeholder="Ethereum Foundation" id="inputName"
-              aria-describedby="helpName">
+            <input [(ngModel)]="beneficiaryName" type="text" class="form-control" placeholder="Ethereum Foundation"
+              id="inputName" aria-describedby="helpName">
             <small id="helpName" class="form-text">The name of the charity/person/project who would receive
               the donation.</small>
           </div>
@@ -39,8 +39,8 @@
             <label class="col-form-label" for="inputAddress">
               Beneficiary's Ethereum Account
             </label>
-            <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control" placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275"
-              id="inputAddress">
+            <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control"
+              placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275" id="inputAddress">
             <small id="helpAddress" class="form-text">The Ethereum account that will receive the donations.</small>
           </div>
 
@@ -48,8 +48,8 @@
             <label class="col-form-label" for="inputSymbol">
               Proof For Beneficiary's Ethereum Address
             </label>
-            <input [(ngModel)]="accountProof" type="text" class="form-control" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-              id="inputProof">
+            <input [(ngModel)]="accountProof" type="text" class="form-control"
+              placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" id="inputProof">
             <small id="helpProof" class="form-text">Proof that the given Ethereum account does belong to the claimed
               beneficiary. Example: link to a Tweet by the beneficiary's official Twitter account stating that the
               account belongs to them.</small>
@@ -68,13 +68,14 @@
             <label class="col-form-label" for="inputLogo">
               Logo Link
             </label>
-            <input [(ngModel)]="logoLink" type="text" class="form-control" placeholder="https://i.imgur.com/bxUaTzg.jpg" id="inputLogo">
+            <input [(ngModel)]="logoLink" type="text" class="form-control" placeholder="https://i.imgur.com/bxUaTzg.jpg"
+              id="inputLogo">
             <small id="helpLogo" class="form-text">Link to the beneficiary's logo. The logo should be
               square/circular.</small>
           </div>
 
-          <button type="button" class="btn btn-success btn-lg" (click)="submitMetadataToIPFS()">
-            Upload metadata to IPFS
+          <button type="button" class="btn btn-success justify-content-center" (click)="createPool()">
+            Create Pool
           </button>
         </div>
       </div>
