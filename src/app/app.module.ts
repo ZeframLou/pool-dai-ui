@@ -9,12 +9,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { MainComponent } from './main/main.component';
 import { CreateComponent } from './create/create.component';
 import { FormsModule } from '@angular/forms';
+import { PoolComponent } from './pool/pool.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
-    CreateComponent
+    CreateComponent,
+    PoolComponent
   ],
   imports: [
     BrowserModule,

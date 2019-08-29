@@ -39,13 +39,4 @@ export class ApolloEnabled implements OnDestroy {
   normalize(n) {
     return new BigNumber(n).div(1e18);
   }
-
-  handleLogoUrl(logoUrl) {
-    return !isUndefined(logoUrl) && logoUrl.length > 0 && isUrl(logoUrl) ? this.sanitize(logoUrl) : this.defaultLogoUrl;
-  }
-
-  sanitize(dirty) {
-    let clean = sanitizeHtml(dirty);
-    return clean;
-  }
 }

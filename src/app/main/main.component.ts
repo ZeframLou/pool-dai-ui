@@ -36,7 +36,6 @@ export class MainComponent extends ApolloEnabled implements OnInit {
             totalSupply
             totalInterestWithdrawn
             name
-            logoUrl
           }
         }
                 `

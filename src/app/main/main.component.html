@@ -6,19 +6,19 @@
           <img src="assets/img/dai.svg" />
         </div>
         <div class="col-auto">
-          <h1 class="display-3"> Pool DAI</h1>
+          <h1 class="display-3">Pool DAI</h1>
         </div>
       </div>
-      <p class="lead">A no-loss donation protocol enabling people to pool money together, lend it out, and donate the
-        interest to a
-        cause.</p>
+      <p class="lead">
+        A no-loss donation protocol enabling people to pool money together, lend it out, and donate the interest to a
+        cause.
+      </p>
       <p class="lead">
         Powered by <a target="_blank" href="https://ethereum.org/">Ethereum</a>,
         <a target="_blank" href="https://compound.finance/">Compound</a>,
         <a target="_blank" href="https://www.makerdao.com/">MakerDAO</a>,
         <a target="_blank" href="https://kyber.network/">Kyber Network</a>,
         <a target="_blank" href="https://blocknative.com/">Blocknative</a>,
-        <a target="_blank" href="https://ipfs.io/">IPFS</a>,
         and <a target="_blank" href="https://thegraph.com/">The Graph</a>.
       </p>
       <hr class="my-4">
@@ -73,7 +73,6 @@
   </div>
 
   <div class="row justify-content-center mb-4">
-    <img src="assets/img/money-shower.gif" />
     <button routerLink="/create" type="button" class="btn btn-success btn-lg">
       Click here to create a pool, 'cause what do you have to lose, eh?
     </button>
@@ -122,9 +121,9 @@
             </tr>
           </thead>
           <tbody id="pool-table">
-            <tr *ngFor="let pool of poolList">
+            <tr *ngFor="let pool of poolList" [routerLink]="['/pool', pool.id]">
               <td>
-                <img class="avatar" src={{handleLogoUrl(pool.logoUrl)}} /> {{sanitize(pool.name)}}
+                {{pool.name}}
               </td>
               <td>
                 {{toBigNumber(pool.totalSupply).toFormat(6)}} DAI
@@ -151,7 +150,7 @@
               href="https://thegraph.com/explorer/subgraph/zeframlou/pooled-cdai">GraphQL API</a></li>
         </ol>
         <p>
-          Made by <a target="_blank" href="https://github.com/ZeframLou">Zefram Lou</a> with blackjack & hookers.
+          Made by <a target="_blank" href="https://github.com/ZeframLou">Zefram Lou</a>.
         </p>
         <p>
           Released under <a target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GPLV3</a>.

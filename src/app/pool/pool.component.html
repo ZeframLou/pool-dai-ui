@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="row justify-content-center mt-3">
+    <div class="col">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3>{{poolData?.name}} ({{poolData?.symbol}})</h3>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Beneficiary: <a target="_blank"
+              href="https://etherscan.io/address/{{poolData?.beneficiary}}"
+              class="card-link">{{poolData?.beneficiary}}</a></li>
+          <li class="list-group-item">Creator: <a target="_blank"
+              href="https://etherscan.io/address/{{poolData?.creator}}" class="card-link">{{poolData?.creator}}</a></li>
+          <li class="list-group-item">Owner: <a target="_blank" href="https://etherscan.io/address/{{poolData?.owner}}"
+              class="card-link">{{poolData?.owner}}</a></li>
+          <li class="list-group-item">Creation time: {{toDateTimeString(poolData?.creationTimestamp)}}</li>
+          <li class="list-group-item">Smart contract: <a target="_blank"
+              href="https://etherscan.io/address/{{getPoolID()}}" class="card-link">{{getPoolID()}}</a></li>
+          <li class="list-group-item">Pool size: {{toBigNumber(poolData?.totalSupply).toFormat(18)}} DAI</li>
+          <li class="list-group-item">
+            <canvas id="totalSupplyHistoryChart"></canvas>
+          </li>
+          <li class="list-group-item">Total interest donated:
+            {{toBigNumber(poolData?.totalInterestWithdrawn).toFormat(18)}} DAI</li>
+          <li class="list-group-item">
+            <canvas id="totalInterestWithdrawnHistoryChart"></canvas>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3>Actions</h3>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <button type="button" class="btn btn-success justify-content-center">
+              Deposit to pool
+            </button>
+          </li>
+          <li class="list-group-item">
+            <button type="button" class="btn btn-success justify-content-center">
+              Withdraw from pool
+            </button>
+          </li>
+          <li class="list-group-item">
+            <button type="button" class="btn btn-success justify-content-center">
+              Withdraw interest to beneficiary
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
