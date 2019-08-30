@@ -121,7 +121,11 @@
         },
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
-          "options": {}
+          "options": {
+            "baseHref": "https://zeframlou.github.io/pool-dai/",
+            "repo": "git@github.com:ZeframLou/pool-dai.git",
+            "branch": "master"
+          }
         }
       }
     }
