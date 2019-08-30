@@ -15,6 +15,11 @@ export class CreateComponent extends Web3Enabled implements OnInit {
 
   FACTORY_ADDRESS: String;
 
+  createdPoolAddress: String;
+  baseUrl: String;
+  hasCreatedPool: Boolean;
+  txHash: String;
+
   constructor(@Inject(WEB3) web3: Web3) {
     super(web3);
 
@@ -23,20 +28,29 @@ export class CreateComponent extends Web3Enabled implements OnInit {
     this.tokenSymbol = "";
 
     this.FACTORY_ADDRESS = "0xd91d45e8f0de4ac5edefe4dc9425a808eb13a324";
+
+    this.hasCreatedPool = false;
+    this.createdPoolAddress = "";
+    this.txHash = "";
   }
 
   ngOnInit() {
+    this.baseUrl = window.location.origin;
   }
 
   async createPool() {
     let self = this;
-    this.connect((state) => {
+    this.connect(async (state) => {
       // initialize contract instance
       const abi = require('../../assets/abi/MetadataPooledCDAIFactory.json');
       const factory = self.assistInstance.Contract(new self.web3.eth.Contract(abi, self.FACTORY_ADDRESS));
 
       // submit transaction
-      self.sendTx(factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, true), console.log, console.log, console.log);
+      this.createdPoolAddress = await factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, true).call();
+      self.sendTx(factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, true), (hash) => {
+        this.txHash = hash;
+        this.hasCreatedPool = true;
+      }, console.log, console.log);
     }, console.log);
   }
 }

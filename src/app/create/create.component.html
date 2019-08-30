@@ -1,5 +1,14 @@
 <div class="container">
-  <div class="row justify-content-center mt-3">
+  <div class="row justify-content-center mb-4 mt-4" routerLink="/" style="cursor: pointer;">
+    <div class="col-auto">
+      <img src="assets/img/dai.svg" />
+    </div>
+    <div class="col-auto">
+      <h1 class="display-3">Pool DAI</h1>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mt-3" *ngIf="!hasCreatedPool">
     <div class="col">
       <div class="card mb-3">
         <div class="card-header">
@@ -46,6 +55,37 @@
           <button type="button" class="btn btn-success justify-content-center" (click)="createPool()">
             Create Pool
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mt-3" *ngIf="hasCreatedPool">
+    <div class="col">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4>Success!</h4>
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            You have successfully created a pool donating to <b>{{beneficiaryName}}</b>. Now, people from around the
+            globe can support <b>{{beneficiaryName}}</b> at no cost!
+          </p>
+          <p class="card-text">
+            A good next step would be to take the privilege of being the first one to put money in the pool. Or if you
+            think creating the pool is already enough work, go ahead and share the pool with everyone on Twitter or
+            something.
+          </p>
+          <p class="card-text">
+            (Do wait for the transaction to go through. You can see its status from, well, the status messages. Or go to
+            <a target="_blank" href="https://etherscan.io/tx/{{txHash}}">Etherscan</a>.)
+          </p>
+          <p class="card-text">
+            The link to your new pool is below:
+          </p>
+          <hr class="my-4">
+          <a target="_blank"
+            href="{{baseUrl}}/pool-dai/pool/{{createdPoolAddress}}">{{baseUrl}}/pool-dai/pool/{{createdPoolAddress}}</a>
         </div>
       </div>
     </div>

@@ -214,7 +214,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
           break;
         case 'DAI':
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
-          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 1.8e5, console.log, console.log, console.log);
+          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 3e5, console.log, console.log, console.log);
           break;
         default:
           let data = this.tokenSymbolToData(tokenSymbol);

@@ -1,4 +1,13 @@
 <div class="container">
+  <div class="row justify-content-center mb-4 mt-4" routerLink="/" style="cursor: pointer;">
+    <div class="col-auto">
+      <img src="assets/img/dai.svg" />
+    </div>
+    <div class="col-auto">
+      <h1 class="display-3">Pool DAI</h1>
+    </div>
+  </div>
+
   <div class="row justify-content-center mt-3">
     <div class="col">
       <div class="card mb-3">
@@ -26,8 +35,15 @@
               class="card-link">{{poolData?.beneficiary}}</a></li>
           <li class="list-group-item">Creator: <a target="_blank"
               href="https://etherscan.io/address/{{poolData?.creator}}" class="card-link">{{poolData?.creator}}</a></li>
-          <li class="list-group-item">Owner: <a target="_blank" href="https://etherscan.io/address/{{poolData?.owner}}"
-              class="card-link">{{poolData?.owner}}</a></li>
+          <li class="list-group-item">Owner:
+            <a target="_blank" href="https://etherscan.io/address/{{poolData?.owner}}" class="card-link"
+              *ngIf="poolData?.owner !== '0x0000000000000000000000000000000000000000'">
+              {{poolData?.owner}}
+            </a>
+            <span *ngIf="poolData?.owner === '0x0000000000000000000000000000000000000000'">
+              Nobody
+            </span>
+          </li>
           <li class="list-group-item">Creation time: {{toDateTimeString(poolData?.creationTimestamp)}}</li>
           <li class="list-group-item">Smart contract: <a target="_blank"
               href="https://etherscan.io/address/{{getPoolID()}}" class="card-link">{{getPoolID()}}</a></li>
