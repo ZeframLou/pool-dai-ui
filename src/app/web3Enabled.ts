@@ -94,15 +94,19 @@ export class Web3Enabled {
     }
   };
 
-  async sendTxWithToken(func, token, to, amount, _onTxHash, _onReceipt, _onError) {
+  async sendTxWithToken(func, token, to, amount, gasLimit, _onTxHash, _onReceipt, _onError) {
     let state = this.state;
     let allowance = new BigNumber(await token.methods.allowance(state.accountAddress, to).call());
     if (allowance.gt(0)) {
+      if (allowance.gte(amount)) {
+        return this.sendTx(func, _onTxHash, _onReceipt, _onError);
+      }
+
       return this.sendTx(token.methods.approve(to, 0), () => {
         this.sendTx(token.methods.approve(to, amount), () => {
           func.send({
             from: this.state.accountAddress,
-            gas: "3000000",
+            gas: gasLimit,
           }).on("transactionHash", (hash) => {
             _onTxHash(hash);
             let listener = setInterval(async () => {
@@ -123,7 +127,7 @@ export class Web3Enabled {
       return this.sendTx(token.methods.approve(to, amount), () => {
         func.send({
           from: this.state.accountAddress,
-          gas: "3000000",
+          gas: gasLimit,
         }).on("transactionHash", (hash) => {
           _onTxHash(hash);
           let listener = setInterval(async () => {

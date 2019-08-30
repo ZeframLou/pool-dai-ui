@@ -3,7 +3,22 @@
     <div class="col">
       <div class="card mb-3">
         <div class="card-header">
-          <h4>{{poolData?.name}} ({{poolData?.symbol}})</h4>
+          <div class="row">
+            <div class="col">
+              <h4>{{poolData?.name}} ({{poolData?.symbol}})</h4>
+            </div>
+            <div class="col-auto">
+              <!-- Refresh -->
+              <button type="button" class="btn btn-primary btn-sm" (click)="refresh()">
+                <span *ngIf="!isLoading">
+                  Refresh
+                </span>
+                <span *ngIf="isLoading">
+                  Loading...
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">Beneficiary: <a target="_blank"
@@ -32,7 +47,7 @@
     <div class="col">
       <div class="card mb-3">
         <div class="card-header">
-          <h4>Deposit</h4>
+          <h4>Deposit to pool</h4>
         </div>
 
         <div class="card-body">
@@ -73,7 +88,7 @@
 
       <div class="card mb-3">
         <div class="card-header">
-          <h4>Withdraw</h4>
+          <h4>Withdraw from pool</h4>
         </div>
 
         <div class="card-body">

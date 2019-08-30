@@ -52,7 +52,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     this.apiKey = "239ccd50-62da-4e2f-aaf4-b33d39a3a0a6";
     this.CHECK_RECEIPT_INTERVAL = 3e3;
 
-    this.KYBER_EXT_ADDRESS = "0xcb29cE2526fF5F80AD1536C6A1B13238D615b4B9";
+    this.KYBER_EXT_ADDRESS = "0x04deb44ac536ed288ab3ddb7d69920e7002965f1";
     this.DAI_ADDRESS = "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359";
 
     this.depositAmount = 0;
@@ -214,7 +214,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
           break;
         case 'DAI':
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
-          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, console.log, console.log, console.log);
+          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 1.8e5, console.log, console.log, console.log);
           break;
         default:
           let data = this.tokenSymbolToData(tokenSymbol);
@@ -226,7 +226,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
           let tokenDecimals = data.decimals;
           amountWithPrecision = new BigNumber(amount).times(new BigNumber(10).pow(tokenDecimals)).integerValue().toFixed();
           let token = this.ERC20(tokenAddress);
-          self.sendTxWithToken(self.kyberExtension().methods.mintWithToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), token, self.KYBER_EXT_ADDRESS, amountWithPrecision, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.mintWithToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), token, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1.7e6, console.log, console.log, console.log);
           break;
       }
     }, console.log);
@@ -240,7 +240,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
       let pcDAI = this.ERC20(this.getPoolID());
       switch (tokenSymbol) {
         case 'ETH':
-          self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 7.5e5, console.log, console.log, console.log);
           break;
         case 'DAI':
           self.sendTx(self.pcDAI().methods.burn(state.accountAddress, amountWithPrecision), console.log, console.log, console.log);
@@ -252,7 +252,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
             break;
           }
           let tokenAddress = data.address;
-          self.sendTxWithToken(self.kyberExtension().methods.burnToToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.burnToToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1.6e6, console.log, console.log, console.log);
           break;
       }
     }, console.log);
@@ -423,15 +423,19 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     }
   };
 
-  async sendTxWithToken(func, token, to, amount, _onTxHash, _onReceipt, _onError) {
+  async sendTxWithToken(func, token, to, amount, gasLimit, _onTxHash, _onReceipt, _onError) {
     let state = this.state;
     let allowance = new BigNumber(await token.methods.allowance(state.accountAddress, to).call());
     if (allowance.gt(0)) {
+      if (allowance.gte(amount)) {
+        return this.sendTx(func, _onTxHash, _onReceipt, _onError);
+      }
+
       return this.sendTx(token.methods.approve(to, 0), () => {
         this.sendTx(token.methods.approve(to, amount), () => {
           func.send({
             from: this.state.accountAddress,
-            gas: "3000000",
+            gas: gasLimit,
           }).on("transactionHash", (hash) => {
             _onTxHash(hash);
             let listener = setInterval(async () => {
@@ -452,7 +456,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
       return this.sendTx(token.methods.approve(to, amount), () => {
         func.send({
           from: this.state.accountAddress,
-          gas: "3000000",
+          gas: gasLimit,
         }).on("transactionHash", (hash) => {
           _onTxHash(hash);
           let listener = setInterval(async () => {
