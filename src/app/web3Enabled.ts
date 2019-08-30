@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import bnc from 'bnc-assist';
 import { isNull } from 'util';
+import BigNumber from 'bignumber.js';
 
 export class Web3Enabled {
   apiKey: String;
@@ -95,8 +96,31 @@ export class Web3Enabled {
 
   async sendTxWithToken(func, token, to, amount, _onTxHash, _onReceipt, _onError) {
     let state = this.state;
-    return this.sendTx(token.methods.approve(to, 0), () => {
-      this.sendTx(token.methods.approve(to, amount), () => {
+    let allowance = new BigNumber(await token.methods.allowance(state.accountAddress, to).call());
+    if (allowance.gt(0)) {
+      return this.sendTx(token.methods.approve(to, 0), () => {
+        this.sendTx(token.methods.approve(to, amount), () => {
+          func.send({
+            from: this.state.accountAddress,
+            gas: "3000000",
+          }).on("transactionHash", (hash) => {
+            _onTxHash(hash);
+            let listener = setInterval(async () => {
+              let receipt = await this.web3.eth.getTransaction(hash);
+              if (!isNull(receipt)) {
+                _onReceipt(receipt);
+                clearInterval(listener);
+              }
+            }, this.CHECK_RECEIPT_INTERVAL);
+          }).on("error", (e) => {
+            if (!e.toString().contains('newBlockHeaders')) {
+              _onError(e);
+            }
+          });
+        }, this.doNothing, _onError);
+      }, this.doNothing, _onError);
+    } else {
+      return this.sendTx(token.methods.approve(to, amount), () => {
         func.send({
           from: this.state.accountAddress,
           gas: "3000000",
@@ -115,7 +139,7 @@ export class Web3Enabled {
           }
         });
       }, this.doNothing, _onError);
-    }, this.doNothing, _onError);
+    }
   };
 
   doNothing() { }

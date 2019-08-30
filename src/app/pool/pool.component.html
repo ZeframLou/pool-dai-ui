@@ -3,7 +3,7 @@
     <div class="col">
       <div class="card mb-3">
         <div class="card-header">
-          <h3>{{poolData?.name}} ({{poolData?.symbol}})</h3>
+          <h4>{{poolData?.name}} ({{poolData?.symbol}})</h4>
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">Beneficiary: <a target="_blank"
@@ -28,28 +28,109 @@
         </ul>
       </div>
     </div>
+
     <div class="col">
       <div class="card mb-3">
         <div class="card-header">
-          <h3>Actions</h3>
+          <h4>Deposit</h4>
         </div>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <button type="button" class="btn btn-success justify-content-center">
-              Deposit to pool
+
+        <div class="card-body">
+          <div class="form-group">
+            <label class="col-form-label" for="inputDepositAmount">
+              Deposit amount
+            </label>
+            <input type="number" [(ngModel)]="depositAmount" class="form-control" placeholder="420.69" min="0"
+              id="inputDepositAmount" aria-describedby="helpDepositAmount">
+            <small id="helpDepositAmount" class="form-text">Denominated in the currency you choose below</small>
+          </div>
+
+          <div class="form-group">
+            <span *ngIf="currencyBalance">
+              You have: {{currencyBalance.toFormat(18)}} {{depositTokenSymbol}}
+            </span>
+            <button type="button" class="btn btn-info justify-content-center" (click)="displayCurrencyBalance()">
+              Check currency balance
             </button>
-          </li>
-          <li class="list-group-item">
-            <button type="button" class="btn btn-success justify-content-center">
-              Withdraw from pool
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="selectDepositToken">
+              Deposit currency
+            </label>
+            <select class="custom-select" id="selectDepositToken" [(ngModel)]="depositTokenSymbol">
+              <option *ngFor="let token of tokenData" value={{token.symbol}}>{{token.name}} ({{token.symbol}})
+              </option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-success justify-content-center"
+            (click)="deposit(depositAmount, depositTokenSymbol)">
+            Deposit to pool
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4>Withdraw</h4>
+        </div>
+
+        <div class="card-body">
+          <div class="form-group">
+            <label class="col-form-label" for="inputWithdrawAmount">
+              Withdraw amount
+            </label>
+            <input type="number" [(ngModel)]="withdrawAmount" class="form-control" placeholder="420.69" min="0"
+              id="inputWithdrawAmount" aria-describedby="helpWithdrawAmount">
+            <small id="helpWithdrawAmount" class="form-text">Denominated in pDAI</small>
+          </div>
+
+          <div class="form-group">
+            <span *ngIf="pDAIBalance">
+              You have: {{pDAIBalance.toFormat(18)}} pDAI
+            </span>
+            <button type="button" class="btn btn-info justify-content-center" (click)="displayPDAIBalance()">
+              Check pDAI balance
             </button>
-          </li>
-          <li class="list-group-item">
-            <button type="button" class="btn btn-success justify-content-center">
-              Withdraw interest to beneficiary
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="selectWithdrawToken">
+              Withdraw currency
+            </label>
+            <select class="custom-select" id="selectWithdrawToken" [(ngModel)]="withdrawTokenSymbol">
+              <option *ngFor="let token of tokenData" value={{token.symbol}}>{{token.name}} ({{token.symbol}})
+              </option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-success justify-content-center"
+            (click)="withdraw(withdrawAmount, withdrawTokenSymbol)">
+            Withdraw from pool
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4>Withdraw interest to beneficiary</h4>
+        </div>
+
+        <div class="card-body">
+          <div class="form-group">
+            <span *ngIf="interestAccrued">
+              Interest accrued: {{interestAccrued.toFormat(18)}} DAI
+            </span>
+            <button type="button" class="btn btn-info justify-content-center" (click)="displayInterestAccrued()">
+              Check interest accrued
             </button>
-          </li>
-        </ul>
+          </div>
+
+          <button type="button" class="btn btn-success justify-content-center" (click)="withdrawInterest()">
+            Withdraw interest to beneficiary
+          </button>
+        </div>
       </div>
     </div>
   </div>
