@@ -22,7 +22,7 @@ export class CreateComponent extends Web3Enabled implements OnInit {
     this.beneficiaryEthereumAccount = "";
     this.tokenSymbol = "";
 
-    this.FACTORY_ADDRESS = "0x64bF69F73F450EF644bC1C8E0F7B3960EeBc5bF8";
+    this.FACTORY_ADDRESS = "0xd91d45e8f0de4ac5edefe4dc9425a808eb13a324";
   }
 
   ngOnInit() {
