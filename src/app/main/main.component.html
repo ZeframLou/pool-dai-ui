@@ -106,8 +106,8 @@
         <div class="card-header">
           <div class="row">
             <div class="col">
-              <input type="search" class="form-control search" (keyup)="filterTable($event,'pool-table',0)"
-                placeholder="Type to search...">
+              <input type="search" [(ngModel)]="searchEntry" class="form-control search"
+                placeholder="Search for pool (case sensitive)..." (keyup.enter)="search()">
             </div>
           </div> <!-- / .row -->
         </div>
@@ -115,9 +115,9 @@
         <table class="table table-hover">
           <thead class="thead-light">
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Pool Size</th>
-              <th scope="col">Interest Donated So Far</th>
+              <th class="clickable" scope="col" (click)="sortBy('name')">Name</th>
+              <th class="clickable" scope="col" (click)="sortBy('totalSupply')">Pool Size</th>
+              <th class="clickable" scope="col" (click)="sortBy('totalInterestWithdrawn')">Interest Donated So Far</th>
             </tr>
           </thead>
           <tbody id="pool-table">
@@ -126,15 +126,35 @@
                 {{pool.name}}
               </td>
               <td>
-                {{toBigNumber(pool.totalSupply).toFormat(6)}} DAI
+                {{toBigNumber(pool.totalSupply).toFixed(6)}} DAI
               </td>
               <td>
-                {{toBigNumber(pool.totalInterestWithdrawn).toFormat(6)}} DAI
+                {{toBigNumber(pool.totalInterestWithdrawn).toFixed(6)}} DAI
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <ul class="pagination text-white">
+        <li class="page-item" [ngClass]="{'disabled' : currentPage() == 1}" (click)="goToPage(currentPage() - 1)">
+          <a class="page-link clickable">&laquo;</a>
+        </li>
+
+        <ng-container *ngFor="let i of getPageNumberList()">
+          <li class="page-item" [ngClass]="{'active' : currentPage() == i + 1}" (click)="goToPage(i + 1)">
+            <a class="page-link clickable">{{i + 1}}</a>
+          </li>
+        </ng-container>
+
+        <li class="page-item" [ngClass]="{'disabled' : currentPage() == numPages()}" (click)="goToPage(currentPage() + 1)">
+          <a class="page-link clickable">&raquo;</a>
+        </li>
+      </ul>
     </div>
   </div>
 

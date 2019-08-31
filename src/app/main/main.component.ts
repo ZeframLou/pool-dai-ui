@@ -15,11 +15,30 @@ export class MainComponent extends ApolloEnabled implements OnInit {
   isLoading: Boolean;
   poolList: Array<any>;
 
+  orderBy: String;
+  orderDirection: String;
+  searchEntry: String;
+  isSearching: Boolean;
+
+  // pagination
+  startFrom: number;
+  pageSize: number;
+  numPools: number;
+
   constructor(private apollo: Apollo) {
     super();
 
     this.isLoading = true;
     this.poolList = new Array<any>();
+
+    this.orderBy = 'totalSupply';
+    this.orderDirection = 'desc';
+    this.searchEntry = '';
+    this.isSearching = false;
+
+    this.startFrom = 0;
+    this.pageSize = 25;
+    this.numPools = 25;
   }
 
   ngOnInit() {
@@ -31,11 +50,14 @@ export class MainComponent extends ApolloEnabled implements OnInit {
       fetchPolicy: 'cache-and-network',
       query: gql`
         {
-          pools(orderBy: totalSupply, orderDirection: desc) {
+          pools(orderBy: ${this.orderBy}, orderDirection: ${this.orderDirection}, where: { name_contains: "${this.searchEntry}" }, skip: ${this.startFrom}, first: ${this.pageSize}) {
             id
             totalSupply
             totalInterestWithdrawn
             name
+          }
+          registry(id: "0") {
+            numPools
           }
         }
                 `
@@ -47,6 +69,7 @@ export class MainComponent extends ApolloEnabled implements OnInit {
     this.isLoading = isUndefined(loading) || loading;
     if (!this.isLoading) {
       this.poolList = data.pools;
+      this.numPools = this.isSearching ? data.pools.length : +data.registry.numPools;
     }
   }
 
@@ -56,18 +79,47 @@ export class MainComponent extends ApolloEnabled implements OnInit {
     this.query.refetch().then((result) => this.handleQuery(result));
   }
 
-  filterTable = (event, tableID, searchID) => {
-    let searchInput = event.target.value.toLowerCase();
-    let entries = $(`#${tableID} tr`);
-    for (let i = 0; i < entries.length; i++) {
-      let entry = entries[i];
-      let searchTarget = entry.children[searchID];
-      if (searchTarget) {
-        if (searchTarget.innerText.toLowerCase().indexOf(searchInput) > -1)
-          entry.style.display = "";
-        else
-          entry.style.display = "none";
-      }
+  reloadQuery() {
+    this.querySubscription.unsubscribe();
+    this.createQuery();
+  }
+
+  sortBy(property) {
+    if (property === this.orderBy) {
+      // switch direction
+      this.orderDirection = (this.orderDirection === 'desc') ? 'asc' : 'desc';
     }
+    this.orderBy = property;
+    
+    this.reloadQuery();
+  }
+
+  search() {
+    this.isSearching = this.searchEntry !== '';
+    this.startFrom = 0;
+
+    this.reloadQuery();
+  }
+
+  numPages() {
+    return Math.ceil(this.numPools / this.pageSize);
+  }
+
+  currentPage() {
+    return Math.ceil(this.startFrom / this.pageSize) + 1;
+  }
+
+  getPageNumberList() {
+    return Array(this.numPages()).keys(); // 0 indexed
+  }
+
+  goToPage(page) {
+    if (page < 1 || page > this.numPages()) {
+      return;
+    }
+
+    this.startFrom = (page - 1) * this.pageSize;
+
+    this.reloadQuery();
   }
 }
