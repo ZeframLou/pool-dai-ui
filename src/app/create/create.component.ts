@@ -12,6 +12,7 @@ export class CreateComponent extends Web3Enabled implements OnInit {
   beneficiaryName: String;
   beneficiaryEthereumAccount: String;
   tokenSymbol: String;
+  renounceOwnershipCheck: Boolean;
 
   FACTORY_ADDRESS: String;
 
@@ -26,6 +27,7 @@ export class CreateComponent extends Web3Enabled implements OnInit {
     this.beneficiaryName = "";
     this.beneficiaryEthereumAccount = "";
     this.tokenSymbol = "";
+    this.renounceOwnershipCheck = false;
 
     this.FACTORY_ADDRESS = "0xd91d45e8f0de4ac5edefe4dc9425a808eb13a324";
 
@@ -46,8 +48,8 @@ export class CreateComponent extends Web3Enabled implements OnInit {
       const factory = self.assistInstance.Contract(new self.web3.eth.Contract(abi, self.FACTORY_ADDRESS));
 
       // submit transaction
-      this.createdPoolAddress = await factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, true).call();
-      self.sendTx(factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, true), (hash) => {
+      this.createdPoolAddress = await factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, self.renounceOwnershipCheck).call();
+      self.sendTx(factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, self.renounceOwnershipCheck), (hash) => {
         this.txHash = hash;
         this.hasCreatedPool = true;
       }, console.log, console.log);

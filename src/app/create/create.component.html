@@ -39,7 +39,7 @@
               Beneficiary's Ethereum Account
             </label>
             <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control"
-              placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275" id="inputAddress">
+              placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275" id="inputAddress" aria-describedby="helpAddress">
             <small id="helpAddress" class="form-text">The Ethereum account that will receive the donations.</small>
           </div>
 
@@ -47,9 +47,21 @@
             <label class="col-form-label" for="inputSymbol">
               Token Symbol
             </label>
-            <input [(ngModel)]="tokenSymbol" type="text" class="form-control" placeholder="pDAI-EF" id="inputSymbol">
+            <input [(ngModel)]="tokenSymbol" type="text" class="form-control" placeholder="pDAI-EF" id="inputSymbol"
+              aria-describedby="helpSymbol">
             <small id="helpSymbol" class="form-text">Symbol of the ERC20 token used for redeeming deposits. Preferrably
               in the form "pDAI-xxx".</small>
+          </div>
+
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" [(ngModel)]="renounceOwnershipCheck" class="custom-control-input"
+                id="renounceOwnershipCheck" aria-describedby="helpRenounceOwnership">
+              <label class="custom-control-label" for="renounceOwnershipCheck">Renounce ownership of the pool</label>
+              <small id="helpRenounceOwnership" class="form-text"><b>Recommended:</b> Renouncing your ownership makes the pool
+                more trust-worthy, because having ownership of the pool allows you to change the
+                beneficiary in the future.</small>
+            </div>
           </div>
 
           <button type="button" class="btn btn-success justify-content-center" (click)="createPool()">
