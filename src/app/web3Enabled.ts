@@ -1,6 +1,6 @@
 import Web3 from 'web3';
 import bnc from 'bnc-assist';
-import { isNull } from 'util';
+import { isNull, isNullOrUndefined } from 'util';
 import BigNumber from 'bignumber.js';
 
 export class Web3Enabled {
@@ -15,7 +15,7 @@ export class Web3Enabled {
   }
 
   async connect(onConnected, onError) {
-    if ('enable' in this.web3.currentProvider) {
+    if (!isNullOrUndefined(this.web3.currentProvider) && 'enable' in this.web3.currentProvider) {
       await this.web3.currentProvider.enable();
     }
 

@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { ApolloEnabled } from '../apollo';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
-import { isUndefined } from 'util';
+import { isUndefined, isNullOrUndefined } from 'util';
 import Chart from 'chart.js';
 
 import { Inject } from '@angular/core';
@@ -344,7 +344,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
   }
 
   async connect(onConnected, onError) {
-    if ('enable' in this.web3.currentProvider) {
+    if (!isNullOrUndefined(this.web3.currentProvider) && 'enable' in this.web3.currentProvider) {
       await this.web3.currentProvider.enable();
     }
 
