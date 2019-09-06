@@ -150,12 +150,7 @@
 
         <div class="card-body">
           <div class="form-group">
-            <span *ngIf="interestAccrued">
-              Interest accrued: {{interestAccrued.toFormat(18)}} DAI
-            </span>
-            <button type="button" class="btn btn-info justify-content-center" (click)="displayInterestAccrued()">
-              Check interest accrued
-            </button>
+            Interest accrued: {{interestAccrued.toFormat(18)}} DAI
           </div>
 
           <button type="button" class="btn btn-success justify-content-center" (click)="withdrawInterest()">

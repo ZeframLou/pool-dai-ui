@@ -59,6 +59,8 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     this.depositTokenSymbol = 'ETH';
     this.withdrawAmount = 0;
     this.withdrawTokenSymbol = 'ETH';
+
+    this.interestAccrued = new BigNumber(0);
   }
 
   async ngOnInit() {
@@ -116,6 +118,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     this.tokenData = await this.getKyberTokens();
 
     this.createQuery();
+    this.displayInterestAccrued();
   }
 
   getPoolID() {
@@ -189,6 +192,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     this.isLoading = true;
 
     this.query.refetch().then((result) => this.handleQuery(result));
+    this.displayInterestAccrued();
   }
 
   withdrawInterest() {
@@ -281,12 +285,10 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     }, console.log);
   }
 
-  displayInterestAccrued() {
-    let self = this;
-    this.connect(async (state) => {
-      let token = self.pcDAI();
-      self.interestAccrued = new BigNumber(await token.methods.accruedInterestCurrent().call()).div(1e18);
-    }, console.log);
+  async displayInterestAccrued() {
+    let web3Instance = new Web3('wss://mainnet.infura.io/ws/v3/1f24e70482f84d1e8d55183921fe2c3f');
+    let token = this.pcDAI(web3Instance);
+    this.interestAccrued = new BigNumber(await token.methods.accruedInterestCurrent().call()).div(1e18);
   }
 
   // Kyber utilities
@@ -331,10 +333,15 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     return this.assistInstance.Contract(new this.web3.eth.Contract(erc20ABI, _tokenAddr));
   };
 
-  pcDAI() {
+  pcDAI(web3Instance?) {
     const abi = require('../../assets/abi/PooledCDAI.json');
-    const pcDAI = this.assistInstance.Contract(new this.web3.eth.Contract(abi, this.getPoolID()));
-    return pcDAI;
+    if (isNullOrUndefined(web3Instance)) {
+      // use default
+      return this.assistInstance.Contract(new this.web3.eth.Contract(abi, this.getPoolID()));
+    } else {
+      // use given web3 instance
+      return new web3Instance.eth.Contract(abi, this.getPoolID());
+    }
   }
 
   kyberExtension() {

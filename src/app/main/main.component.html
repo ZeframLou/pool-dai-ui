@@ -1,6 +1,10 @@
 <div class="container">
   <div class="row">
     <div class="container-fluid" style="margin-top: 5%">
+      <div class="alert alert-light">
+        <p class="mb-0 text-center">⚠️ The smart contracts used are not audited, use at your own risk.</p>
+      </div>
+
       <div class="row justify-content-center mb-4">
         <div class="col-auto">
           <img src="assets/img/dai.svg" />
@@ -151,7 +155,8 @@
           </li>
         </ng-container>
 
-        <li class="page-item" [ngClass]="{'disabled' : currentPage() == numPages()}" (click)="goToPage(currentPage() + 1)">
+        <li class="page-item" [ngClass]="{'disabled' : currentPage() == numPages()}"
+          (click)="goToPage(currentPage() + 1)">
           <a class="page-link clickable">&raquo;</a>
         </li>
       </ul>
@@ -168,15 +173,14 @@
               Repo</a></li>
           <li class="breadcrumb-item"><a target="_blank"
               href="https://thegraph.com/explorer/subgraph/zeframlou/pooled-cdai">GraphQL API</a></li>
+          <li class="breadcrumb-item"><a target="_blank"
+              href="https://t.me/pooldai">Telegram Group</a></li>
         </ol>
         <p>
           Made by <a target="_blank" href="https://github.com/ZeframLou">Zefram Lou</a>.
         </p>
         <p>
           Released under <a target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GPLV3</a>.
-        </p>
-        <p>
-          The smart contracts used are not audited, use at your own risk.
         </p>
       </div>
     </div>
