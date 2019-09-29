@@ -12,7 +12,7 @@ import Web3 from 'web3';
 import bnc from 'bnc-assist';
 import { isNull } from 'util';
 import BigNumber from 'bignumber.js';
-import * as https from 'https';
+const fetch = require('node-fetch');
 
 @Component({
   selector: 'app-pool',
@@ -293,19 +293,8 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
 
   // Kyber utilities
   async httpsGet(apiStr) {
-    const data = await (new Promise((resolve, reject) => {
-      https.get(apiStr, (res) => {
-        var rawData = "";
-        res.on("data", (chunk) => {
-          rawData += chunk;
-        });
-        res.on("end", () => {
-          var parsedData = JSON.parse(rawData);
-          resolve(parsedData);
-        });
-      }).on("error", reject);
-    }));
-    return data;
+    const request = await fetch(apiStr, {headers: {'Origin': 'https://zeframlou.github.io/pool-dai/'}});
+    return await request.json();
   };
 
   async getKyberTokens() {
