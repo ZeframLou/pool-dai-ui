@@ -218,7 +218,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
           break;
         case 'DAI':
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
-          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 3e5, console.log, console.log, console.log);
+          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 5e5, console.log, console.log, console.log);
           break;
         default:
           let data = this.tokenSymbolToData(tokenSymbol);
@@ -230,7 +230,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
           let tokenDecimals = data.decimals;
           amountWithPrecision = new BigNumber(amount).times(new BigNumber(10).pow(tokenDecimals)).integerValue().toFixed();
           let token = this.ERC20(tokenAddress);
-          self.sendTxWithToken(self.kyberExtension().methods.mintWithToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), token, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1.7e6, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.mintWithToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), token, self.KYBER_EXT_ADDRESS, amountWithPrecision, 2.5e6, console.log, console.log, console.log);
           break;
       }
     }, console.log);
@@ -244,7 +244,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
       let pcDAI = this.ERC20(this.getPoolID());
       switch (tokenSymbol) {
         case 'ETH':
-          self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 7.5e5, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1e6, console.log, console.log, console.log);
           break;
         case 'DAI':
           self.sendTx(self.pcDAI().methods.burn(state.accountAddress, amountWithPrecision), console.log, console.log, console.log);
@@ -256,7 +256,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
             break;
           }
           let tokenAddress = data.address;
-          self.sendTxWithToken(self.kyberExtension().methods.burnToToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1.6e6, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.burnToToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 2e6, console.log, console.log, console.log);
           break;
       }
     }, console.log);
