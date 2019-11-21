@@ -216,7 +216,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
           self.sendTxWithValue(self.kyberExtension().methods.mintWithETH(self.getPoolID(), state.accountAddress), amountWithPrecision, console.log, console.log, console.log);
           break;
-        case 'DAI':
+        case 'SAI':
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
           self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 5e5, console.log, console.log, console.log);
           break;
@@ -246,7 +246,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
         case 'ETH':
           self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1e6, console.log, console.log, console.log);
           break;
-        case 'DAI':
+        case 'SAI':
           self.sendTx(self.pcDAI().methods.burn(state.accountAddress, amountWithPrecision), console.log, console.log, console.log);
           break;
         default:
