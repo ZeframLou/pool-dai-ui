@@ -1,23 +1,35 @@
 import { Subscription } from 'apollo-client/util/Observable';
 import { OnDestroy } from '@angular/core';
 import { BigNumber } from 'bignumber.js';
-import { isUrl } from 'is-url';
-import { isUndefined } from 'util';
-import * as sanitizeHtml from 'sanitize-html';
+import { isNullOrUndefined } from 'util';
+import { Web3Enabled } from './web3Enabled';
+import Web3 from 'web3';
 
-export class ApolloEnabled implements OnDestroy {
+export class ApolloAndWeb3Enabled extends Web3Enabled implements OnDestroy {
   querySubscription: Subscription;
   query: any;
-  defaultPollInterval: Number;
+
+  pollInterval: number;
+  fetchPolicy: any;
+
   defaultLogoUrl: String;
 
-  constructor() {
-    this.defaultPollInterval = 60000;
+  constructor(public web3: Web3) {
+    super(web3);
+
+    this.pollInterval = 60000;
     this.defaultLogoUrl = 'assets/img/no-logo-asset.svg';
+    this.fetchPolicy = 'cache-and-network';
   }
 
   ngOnDestroy() {
-    this.querySubscription.unsubscribe();
+    this.unsubQuery();
+  }
+
+  unsubQuery() {
+    if (!isNullOrUndefined(this.querySubscription)) {
+      this.querySubscription.unsubscribe();
+    }
   }
 
   toBigNumber(n) {
@@ -34,9 +46,5 @@ export class ApolloEnabled implements OnDestroy {
 
   toDateObject(unixTimestamp) {
     return new Date(+unixTimestamp * 1e3);
-  }
-
-  normalize(n) {
-    return new BigNumber(n).div(1e18);
   }
 }

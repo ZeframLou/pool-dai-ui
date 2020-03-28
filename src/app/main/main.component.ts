@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { ApolloEnabled } from '../apollo';
+import { ApolloAndWeb3Enabled } from '../apolloAndWeb3';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { isUndefined } from 'util';
-import $ from 'jquery';
+
+import { Inject } from '@angular/core';
+import { WEB3 } from '../web3';
+import Web3 from 'web3';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent extends ApolloEnabled implements OnInit {
+export class MainComponent extends ApolloAndWeb3Enabled implements OnInit {
 
   isLoading: Boolean;
   poolList: Array<any>;
@@ -25,8 +28,8 @@ export class MainComponent extends ApolloEnabled implements OnInit {
   pageSize: number;
   numPools: number;
 
-  constructor(private apollo: Apollo) {
-    super();
+  constructor(private apollo: Apollo, @Inject(WEB3) web3: Web3) {
+    super(web3);
 
     this.isLoading = true;
     this.poolList = new Array<any>();
@@ -47,7 +50,8 @@ export class MainComponent extends ApolloEnabled implements OnInit {
 
   createQuery() {
     this.query = this.apollo.watchQuery({
-      fetchPolicy: 'cache-and-network',
+      pollInterval: this.pollInterval,
+      fetchPolicy: this.fetchPolicy,
       query: gql`
         {
           pools(orderBy: ${this.orderBy}, orderDirection: ${this.orderDirection}, where: { name_contains: "${this.searchEntry}" }, skip: ${this.startFrom}, first: ${this.pageSize}) {
@@ -90,7 +94,7 @@ export class MainComponent extends ApolloEnabled implements OnInit {
       this.orderDirection = (this.orderDirection === 'desc') ? 'asc' : 'desc';
     }
     this.orderBy = property;
-    
+
     this.reloadQuery();
   }
 

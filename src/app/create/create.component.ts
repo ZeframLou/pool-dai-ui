@@ -53,6 +53,6 @@ export class CreateComponent extends Web3Enabled implements OnInit {
         this.txHash = hash;
         this.hasCreatedPool = true;
       }, console.log, console.log);
-    }, console.log);
+    }, console.log, false);
   }
 }
