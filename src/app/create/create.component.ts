@@ -8,11 +8,15 @@ import Web3 from 'web3';
   styleUrls: ['./create.component.css']
 })
 export class CreateComponent extends Web3Enabled implements OnInit {
+  DEV_ACCOUNT = '0x5f350bF5feE8e254D6077f8661E9C7B83a30364e';
+  DEV_SUPPORT = 0.05; // 5% interest support developer
 
-  beneficiaryName: String;
-  beneficiaryEthereumAccount: String;
+  tokenName: String;
   tokenSymbol: String;
+  beneficiaryEthereumAccount: String;
+  beneficiaryWeights: String;
   renounceOwnershipCheck: Boolean;
+  devSupportCheck: Boolean;
 
   FACTORY_ADDRESS: String;
 
@@ -24,12 +28,14 @@ export class CreateComponent extends Web3Enabled implements OnInit {
   constructor(@Inject(WEB3) web3: Web3) {
     super(web3);
 
-    this.beneficiaryName = "";
+    this.tokenName = "";
     this.beneficiaryEthereumAccount = "";
+    this.beneficiaryWeights = "";
     this.tokenSymbol = "";
     this.renounceOwnershipCheck = false;
+    this.devSupportCheck = true;
 
-    this.FACTORY_ADDRESS = "0xd91d45e8f0de4ac5edefe4dc9425a808eb13a324";
+    this.FACTORY_ADDRESS = "0xB72B4B94d1eD3Cc382D5beEEfE3d03dd55Ad8229";
 
     this.hasCreatedPool = false;
     this.createdPoolAddress = "";
@@ -41,15 +47,36 @@ export class CreateComponent extends Web3Enabled implements OnInit {
   }
 
   async createPool() {
+    // parse beneficiaryList
+    let beneficiaryDestList = this.beneficiaryEthereumAccount.replace(/ /g, '').split(',');
+    let beneficiaryWeightList = this.beneficiaryWeights.replace(/ /g, '').split(',');
+    let beneficiaryList = beneficiaryDestList.map((x, i) => {
+      return {
+        dest: x,
+        weight: beneficiaryWeightList[i]
+      };
+    });
+    if (this.devSupportCheck) {
+      let totalBeneficiaryWeight = 0;
+      for (const b of beneficiaryList) {
+        totalBeneficiaryWeight += +b.weight;
+      }
+      const devWeight = Math.floor(totalBeneficiaryWeight / (1 - this.DEV_SUPPORT) * this.DEV_SUPPORT);
+      beneficiaryList.push({
+        dest: this.DEV_ACCOUNT,
+        weight: devWeight.toString()
+      });
+    }
+
     let self = this;
-    this.connect(async (state) => {
+    this.connect(async () => {
       // initialize contract instance
       const abi = require('../../assets/abi/MetadataPooledCDAIFactory.json');
-      const factory = self.assistInstance.Contract(new self.web3.eth.Contract(abi, self.FACTORY_ADDRESS));
+      const factory = new self.web3.eth.Contract(abi, self.FACTORY_ADDRESS);
 
       // submit transaction
-      this.createdPoolAddress = await factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, self.renounceOwnershipCheck).call();
-      self.sendTx(factory.methods.createPCDAI(self.beneficiaryName, self.tokenSymbol, self.beneficiaryEthereumAccount, self.renounceOwnershipCheck), (hash) => {
+      this.createdPoolAddress = await factory.methods.createPCDAI(self.tokenName, self.tokenSymbol, beneficiaryList, self.renounceOwnershipCheck).call();
+      self.sendTx(factory.methods.createPCDAI(self.tokenName, self.tokenSymbol, beneficiaryList, self.renounceOwnershipCheck), (hash) => {
         this.txHash = hash;
         this.hasCreatedPool = true;
       }, console.log, console.log);

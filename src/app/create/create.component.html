@@ -26,21 +26,13 @@
 
           <div class="form-group">
             <label class="col-form-label" for="inputName">
-              Beneficiary Name
+              Token Name
             </label>
-            <input [(ngModel)]="beneficiaryName" type="text" class="form-control" placeholder="Ethereum Foundation"
+            <input [(ngModel)]="tokenName" type="text" class="form-control" placeholder="Ethereum Foundation"
               id="inputName" aria-describedby="helpName">
-            <small id="helpName" class="form-text">The name of the charity/person/project who would receive
+            <small id="helpName" class="form-text">The name of the token that will be created. Example: the name of the
+              charities/people/projects who would receive
               the donation.</small>
-          </div>
-
-          <div class="form-group">
-            <label class="col-form-label" for="inputAddress">
-              Beneficiary's Ethereum Account
-            </label>
-            <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control"
-              placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275" id="inputAddress" aria-describedby="helpAddress">
-            <small id="helpAddress" class="form-text">The Ethereum account that will receive the donations.</small>
           </div>
 
           <div class="form-group">
@@ -54,13 +46,46 @@
           </div>
 
           <div class="form-group">
+            <label class="col-form-label" for="inputAddress">
+              Beneficiaries' Ethereum Accounts
+            </label>
+            <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control"
+              placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275, 0x58b64a1feAC144eb077627C9C6b66cE2097396Af"
+              id="inputAddress" aria-describedby="helpAddress">
+            <small id="helpAddress" class="form-text">The Ethereum accounts that will receive the donations. Input
+              multiple beneficiaries by separating the addresses with commas.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputAddress">
+              Beneficiaries' Weights
+            </label>
+            <input [(ngModel)]="beneficiaryWeights" type="text" class="form-control" placeholder="80, 20"
+              id="inputWeights" aria-describedby="helpWeights">
+            <small id="helpWeights" class="form-text">Weights that determine the proportion of the donation that each
+              beneficiary receives. Weights should be whole numbers separated by commas.</small>
+          </div>
+
+          <div class="form-group">
             <div class="custom-control custom-checkbox">
               <input type="checkbox" [(ngModel)]="renounceOwnershipCheck" class="custom-control-input"
                 id="renounceOwnershipCheck" aria-describedby="helpRenounceOwnership">
               <label class="custom-control-label" for="renounceOwnershipCheck">Renounce ownership of the pool</label>
-              <small id="helpRenounceOwnership" class="form-text"><b>Recommended:</b> Renouncing your ownership makes the pool
+              <small id="helpRenounceOwnership" class="form-text"><b>Recommended:</b> Renouncing your ownership makes
+                the pool
                 more trust-worthy, because having ownership of the pool allows you to change the
                 beneficiary in the future.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" [(ngModel)]="devSupportCheck" class="custom-control-input" id="devSupportCheck"
+                aria-describedby="helpDevSupport">
+              <label class="custom-control-label" for="devSupportCheck">Give 5% of donations to support PoolDAI's
+                development</label>
+              <small id="helpDevSupport" class="form-text">Pays for my morning cup of coffee. Why not? It's not like it
+                costs anything 😉</small>
             </div>
           </div>
 
@@ -80,8 +105,8 @@
         </div>
         <div class="card-body">
           <p class="card-text">
-            You have successfully created a pool donating to <b>{{beneficiaryName}}</b>. Now, people from around the
-            globe can support <b>{{beneficiaryName}}</b> at no cost!
+            You have successfully created a pool donating to <b>{{tokenName}}</b>. Now, people from around the
+            globe can support <b>{{tokenName}}</b> at no cost!
           </p>
           <p class="card-text">
             A good next step would be to take the privilege of being the first one to put money in the pool. Or if you

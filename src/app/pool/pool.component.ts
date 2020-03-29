@@ -19,6 +19,8 @@ const fetch = require('node-fetch');
 })
 // Damn Typescript for not supporting extending multiple classes
 export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
+  DEV_ACCOUNT = '0x5f350bF5feE8e254D6077f8661E9C7B83a30364e';
+  DEV_SUPPORT = 0.05; // 5% interest support developer
 
   isLoading: Boolean;
   poolData: any;
@@ -26,7 +28,6 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
   totalInterestWithdrawnHistoryChart: any;
 
   KYBER_EXT_ADDRESS: String;
-  DAI_ADDRESS: String;
 
   tokenData: any;
 
@@ -39,11 +40,14 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
   pDAIBalance: BigNumber;
   interestAccrued: BigNumber;
 
+  beneficiaryEthereumAccount: String;
+  beneficiaryWeights: String;
+  devSupportCheck: Boolean;
+
   constructor(private route: ActivatedRoute, private apollo: Apollo, @Inject(WEB3) web3: Web3) {
     super(web3);
 
-    this.KYBER_EXT_ADDRESS = "0x04deb44ac536ed288ab3ddb7d69920e7002965f1";
-    this.DAI_ADDRESS = "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359";
+    this.KYBER_EXT_ADDRESS = "0x44FBF73a97cf50640A3208b883F810F730D80c2B";
 
     this.depositAmount = 0;
     this.depositTokenSymbol = 'ETH';
@@ -51,6 +55,10 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
     this.withdrawTokenSymbol = 'ETH';
 
     this.interestAccrued = new BigNumber(0);
+
+    this.beneficiaryEthereumAccount = "";
+    this.beneficiaryWeights = "";
+    this.devSupportCheck = true;
   }
 
   async ngOnInit() {
@@ -131,7 +139,11 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
             creator
             creationTimestamp
             owner
-            beneficiary
+            totalBeneficiaryWeight
+            beneficiaries {
+              dest
+              weight
+            }
             totalSupplyHistory {
               timestamp
               value
@@ -188,7 +200,7 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
 
   withdrawInterest() {
     let self = this;
-    this.connect((state) => {
+    this.connect(() => {
       // initialize contract instance
       const pcDAI = self.pcDAI();
 
@@ -200,16 +212,16 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
   deposit(amount, tokenSymbol) {
     let self = this;
     let amountWithPrecision;
-    this.connect((state) => {
+    this.connect(() => {
       // submit transaction
       switch (tokenSymbol) {
         case 'ETH':
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
-          self.sendTxWithValue(self.kyberExtension().methods.mintWithETH(self.getPoolID(), state.accountAddress), amountWithPrecision, console.log, console.log, console.log);
+          self.sendTxWithValue(self.kyberExtension().methods.mintWithETH(self.getPoolID(), this.state.address), amountWithPrecision, console.log, console.log, console.log);
           break;
-        case 'SAI':
+        case 'DAI':
           amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
-          self.sendTxWithToken(self.pcDAI().methods.mint(state.accountAddress, amountWithPrecision), self.ERC20(self.DAI_ADDRESS), self.getPoolID(), amountWithPrecision, 5e5, console.log, console.log, console.log);
+          self.sendTxWithToken(self.pcDAI().methods.mint(this.state.address, amountWithPrecision), self.ERC20(self.DAI_ADDR), self.getPoolID(), amountWithPrecision, 5e5, console.log, console.log, console.log);
           break;
         default:
           let data = this.tokenSymbolToData(tokenSymbol);
@@ -221,7 +233,7 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
           let tokenDecimals = data.decimals;
           amountWithPrecision = new BigNumber(amount).times(new BigNumber(10).pow(tokenDecimals)).integerValue().toFixed();
           let token = this.ERC20(tokenAddress);
-          self.sendTxWithToken(self.kyberExtension().methods.mintWithToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), token, self.KYBER_EXT_ADDRESS, amountWithPrecision, 2.5e6, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.mintWithToken(self.getPoolID(), tokenAddress, this.state.address, amountWithPrecision), token, self.KYBER_EXT_ADDRESS, amountWithPrecision, 2.5e6, console.log, console.log, console.log);
           break;
       }
     }, console.log, false);
@@ -230,15 +242,15 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
   withdraw(amount, tokenSymbol) {
     let self = this;
     let amountWithPrecision = new BigNumber(amount).times(1e18).integerValue().toFixed();
-    this.connect((state) => {
+    this.connect(() => {
       // submit transaction
       let pcDAI = this.ERC20(this.getPoolID());
       switch (tokenSymbol) {
         case 'ETH':
-          self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1e6, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.burnToETH(self.getPoolID(), this.state.address, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 1e6, console.log, console.log, console.log);
           break;
-        case 'SAI':
-          self.sendTx(self.pcDAI().methods.burn(state.accountAddress, amountWithPrecision), console.log, console.log, console.log);
+        case 'DAI':
+          self.sendTx(self.pcDAI().methods.burn(this.state.address, amountWithPrecision), console.log, console.log, console.log);
           break;
         default:
           let data = this.tokenSymbolToData(tokenSymbol);
@@ -247,22 +259,54 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
             break;
           }
           let tokenAddress = data.address;
-          self.sendTxWithToken(self.kyberExtension().methods.burnToToken(self.getPoolID(), tokenAddress, state.accountAddress, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 2e6, console.log, console.log, console.log);
+          self.sendTxWithToken(self.kyberExtension().methods.burnToToken(self.getPoolID(), tokenAddress, this.state.address, amountWithPrecision), pcDAI, self.KYBER_EXT_ADDRESS, amountWithPrecision, 2e6, console.log, console.log, console.log);
           break;
       }
     }, console.log, false);
   }
 
+  changeBeneficiaries() {
+    // parse beneficiaryList
+    let beneficiaryDestList = this.beneficiaryEthereumAccount.replace(/ /g, '').split(',');
+    let beneficiaryWeightList = this.beneficiaryWeights.replace(/ /g, '').split(',');
+    let beneficiaryList = beneficiaryDestList.map((x, i) => {
+      return {
+        dest: x,
+        weight: beneficiaryWeightList[i]
+      };
+    });
+    if (this.devSupportCheck) {
+      let totalBeneficiaryWeight = 0;
+      for (const b of beneficiaryList) {
+        totalBeneficiaryWeight += +b.weight;
+      }
+      const devWeight = Math.floor(totalBeneficiaryWeight / (1 - this.DEV_SUPPORT) * this.DEV_SUPPORT);
+      beneficiaryList.push({
+        dest: this.DEV_ACCOUNT,
+        weight: devWeight.toString()
+      });
+    }
+
+    let self = this;
+    this.connect(async () => {
+      // initialize contract instance
+      const abi = require('../../assets/abi/PooledCDAI.json');
+      const pool = new self.web3.eth.Contract(abi, self.getPoolID());
+
+      self.sendTx(pool.methods.setBeneficiaries(beneficiaryList), console.log, console.log, console.log);
+    }, console.log, false);
+  }
+
   displayCurrencyBalance() {
     let self = this;
-    this.connect(async (state) => {
+    this.connect(async () => {
       if (self.depositTokenSymbol === 'ETH') {
-        self.currencyBalance = new BigNumber(await self.web3.eth.getBalance(state.accountAddress)).div(1e18);
+        self.currencyBalance = new BigNumber(await self.web3.eth.getBalance(this.state.address)).div(1e18);
       } else {
         let data = self.tokenSymbolToData(self.depositTokenSymbol);
         if (!isUndefined(data)) {
           let token = self.ERC20(data.address);
-          self.currencyBalance = new BigNumber(await token.methods.balanceOf(state.accountAddress).call()).div(1e18);
+          self.currencyBalance = new BigNumber(await token.methods.balanceOf(this.state.address).call()).div(new BigNumber(10).pow(data.decimals));
         }
       }
     }, console.log, false);
@@ -270,9 +314,9 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
 
   displayPDAIBalance() {
     let self = this;
-    this.connect(async (state) => {
+    this.connect(async () => {
       let token = self.pcDAI();
-      self.pDAIBalance = new BigNumber(await token.methods.balanceOf(state.accountAddress).call()).div(1e18);
+      self.pDAIBalance = new BigNumber(await token.methods.balanceOf(this.state.address).call()).div(1e18);
     }, console.log, false);
   }
 
@@ -310,14 +354,14 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
   ERC20(_tokenAddr) {
     // add new token contract
     var erc20ABI = require("../../assets/abi/ERC20.json");
-    return this.assistInstance.Contract(new this.web3.eth.Contract(erc20ABI, _tokenAddr));
+    return new this.web3.eth.Contract(erc20ABI, _tokenAddr);
   };
 
   pcDAI(web3Instance?) {
     const abi = require('../../assets/abi/PooledCDAI.json');
     if (isNullOrUndefined(web3Instance)) {
       // use default
-      return this.assistInstance.Contract(new this.web3.eth.Contract(abi, this.getPoolID()));
+      return new this.web3.eth.Contract(abi, this.getPoolID());
     } else {
       // use given web3 instance
       return new web3Instance.eth.Contract(abi, this.getPoolID());
@@ -326,7 +370,7 @@ export class PoolComponent extends ApolloAndWeb3Enabled implements OnInit {
 
   kyberExtension() {
     let abi = require('../../assets/abi/PooledCDAIKyberExtension.json');
-    let contract = this.assistInstance.Contract(new this.web3.eth.Contract(abi, this.KYBER_EXT_ADDRESS));
+    let contract = new this.web3.eth.Contract(abi, this.KYBER_EXT_ADDRESS);
     return contract;
   }
 }

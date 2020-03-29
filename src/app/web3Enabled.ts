@@ -157,7 +157,7 @@ export class Web3Enabled {
         networkId: 1
       });
       this.notifyInstance.config({
-        darkMode: true
+        darkMode: false
       });
     }
   }

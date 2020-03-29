@@ -30,9 +30,25 @@
           </div>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item">Beneficiary: <a target="_blank"
-              href="https://etherscan.io/address/{{poolData?.beneficiary}}"
-              class="card-link">{{poolData?.beneficiary}}</a></li>
+          <li class="list-group-item">
+            Beneficiaries:
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <tr>
+                  <th>Address</th>
+                  <th>Weight</th>
+                </tr>
+                <tr *ngFor="let beneficiary of poolData?.beneficiaries">
+                  <td>
+                    <a target="_blank" href="https://etherscan.io/address/{{beneficiary.dest}}"
+                      class="card-link">{{beneficiary.dest}}</a>
+                  </td>
+                  <td>{{toBigNumber(beneficiary.weight).div(poolData?.totalBeneficiaryWeight).times(100)}}%</td>
+                </tr>
+              </table>
+            </div>
+
+          </li>
           <li class="list-group-item">Creator: <a target="_blank"
               href="https://etherscan.io/address/{{poolData?.creator}}" class="card-link">{{poolData?.creator}}</a></li>
           <li class="list-group-item">Owner:
@@ -145,7 +161,7 @@
 
       <div class="card mb-3">
         <div class="card-header">
-          <h4>Withdraw interest to beneficiary</h4>
+          <h4>Withdraw interest to beneficiaries</h4>
         </div>
 
         <div class="card-body">
@@ -155,6 +171,50 @@
 
           <button type="button" class="btn btn-success justify-content-center" (click)="withdrawInterest()">
             Withdraw interest to beneficiary
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-3" *ngIf="poolData?.owner !== '0x0000000000000000000000000000000000000000'">
+        <div class="card-header">
+          <h4>Change beneficiaries (Only the owner can do this)</h4>
+        </div>
+
+        <div class="card-body">
+          <div class="form-group">
+            <label class="col-form-label" for="inputAddress">
+              Beneficiaries' Ethereum Accounts
+            </label>
+            <input [(ngModel)]="beneficiaryEthereumAccount" type="text" class="form-control"
+              placeholder="0xc0FcF8403e10B65f1D18f1B81b093004B1127275, 0x58b64a1feAC144eb077627C9C6b66cE2097396Af"
+              id="inputAddress" aria-describedby="helpAddress">
+            <small id="helpAddress" class="form-text">The Ethereum accounts that will receive the donations. Input
+              multiple beneficiaries by separating the addresses with commas.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="col-form-label" for="inputAddress">
+              Beneficiaries' Weights
+            </label>
+            <input [(ngModel)]="beneficiaryWeights" type="text" class="form-control" placeholder="80, 20"
+              id="inputWeights" aria-describedby="helpWeights">
+            <small id="helpWeights" class="form-text">Weights that determine the proportion of the donation that each
+              beneficiary receives. Weights should be whole numbers separated by commas.</small>
+          </div>
+
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" [(ngModel)]="devSupportCheck" class="custom-control-input" id="devSupportCheck"
+                aria-describedby="helpDevSupport">
+              <label class="custom-control-label" for="devSupportCheck">Give 5% of donations to support PoolDAI's
+                development</label>
+              <small id="helpDevSupport" class="form-text">Pays for my morning cup of coffee. Why not? It's not like it
+                costs anything 😉</small>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-success justify-content-center" (click)="changeBeneficiaries()">
+            Confirm
           </button>
         </div>
       </div>
