@@ -11,7 +11,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/pdai-ui",
             "index": "src/index.html",
@@ -27,10 +27,7 @@
               "src/styles.css",
               "src/assets/css/bootstrap.min.css"
             ],
-            "scripts": [],
-            "customWebpackConfig": {
-              "path": "./webpack.config.js"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -60,7 +57,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "pdai-ui:build"
           },
