@@ -4,7 +4,7 @@ import { isNull, isNullOrUndefined } from 'util';
 import BigNumber from 'bignumber.js';
 
 export class Web3Enabled {
-  apiKey: String;
+  apiKey: string;
   assistInstance: any;
   state: any;
   CHECK_RECEIPT_INTERVAL: number; // in milliseconds
@@ -15,10 +15,6 @@ export class Web3Enabled {
   }
 
   async connect(onConnected, onError) {
-    if (!isNullOrUndefined(this.web3.currentProvider) && 'enable' in this.web3.currentProvider) {
-      await this.web3.currentProvider.enable();
-    }
-
     var bncAssistConfig = {
       dappId: this.apiKey,
       networkId: 1,

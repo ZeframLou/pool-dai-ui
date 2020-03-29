@@ -15,9 +15,9 @@ export class MainComponent extends ApolloEnabled implements OnInit {
   isLoading: Boolean;
   poolList: Array<any>;
 
-  orderBy: String;
-  orderDirection: String;
-  searchEntry: String;
+  orderBy: string;
+  orderDirection: string;
+  searchEntry: string;
   isSearching: Boolean;
 
   // pagination

@@ -9,17 +9,17 @@ import Web3 from 'web3';
 })
 export class CreateComponent extends Web3Enabled implements OnInit {
 
-  beneficiaryName: String;
-  beneficiaryEthereumAccount: String;
-  tokenSymbol: String;
+  beneficiaryName: string;
+  beneficiaryEthereumAccount: string;
+  tokenSymbol: string;
   renounceOwnershipCheck: Boolean;
 
-  FACTORY_ADDRESS: String;
+  FACTORY_ADDRESS: string;
 
-  createdPoolAddress: String;
-  baseUrl: String;
+  createdPoolAddress: string;
+  baseUrl: string;
   hasCreatedPool: Boolean;
-  txHash: String;
+  txHash: string;
 
   constructor(@Inject(WEB3) web3: Web3) {
     super(web3);

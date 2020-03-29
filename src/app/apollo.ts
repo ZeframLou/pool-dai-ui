@@ -9,7 +9,7 @@ export class ApolloEnabled implements OnDestroy {
   querySubscription: Subscription;
   query: any;
   defaultPollInterval: Number;
-  defaultLogoUrl: String;
+  defaultLogoUrl: string;
 
   constructor() {
     this.defaultPollInterval = 60000;

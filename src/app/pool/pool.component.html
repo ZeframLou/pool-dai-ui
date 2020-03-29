@@ -63,41 +63,12 @@
     <div class="col">
       <div class="card mb-3">
         <div class="card-header">
-          <h4>Deposit to pool</h4>
+          <h4>Migrate to V2</h4>
         </div>
 
         <div class="card-body">
-          <div class="form-group">
-            <label class="col-form-label" for="inputDepositAmount">
-              Deposit amount
-            </label>
-            <input type="number" [(ngModel)]="depositAmount" class="form-control" placeholder="420.69" min="0"
-              id="inputDepositAmount" aria-describedby="helpDepositAmount">
-            <small id="helpDepositAmount" class="form-text">Denominated in the currency you choose below</small>
-          </div>
-
-          <div class="form-group">
-            <span *ngIf="currencyBalance">
-              You have: {{currencyBalance.toFormat(18)}} {{depositTokenSymbol}}
-            </span>
-            <button type="button" class="btn btn-info justify-content-center" (click)="displayCurrencyBalance()">
-              Check currency balance
-            </button>
-          </div>
-
-          <div class="form-group">
-            <label class="col-form-label" for="selectDepositToken">
-              Deposit currency
-            </label>
-            <select class="custom-select" id="selectDepositToken" [(ngModel)]="depositTokenSymbol">
-              <option *ngFor="let token of tokenData" value={{token.symbol}}>{{token.name}} ({{token.symbol}})
-              </option>
-            </select>
-          </div>
-
-          <button type="button" class="btn btn-success justify-content-center"
-            (click)="deposit(depositAmount, depositTokenSymbol)">
-            Deposit to pool
+          <button type="button" class="btn btn-success justify-content-center" (click)="migrate()">
+            Migrate
           </button>
         </div>
       </div>

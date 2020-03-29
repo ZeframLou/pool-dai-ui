@@ -27,26 +27,26 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
   totalSupplyHistoryChart: any;
   totalInterestWithdrawnHistoryChart: any;
 
-  apiKey: String;
+  apiKey: string;
   assistInstance: any;
   state: any;
   CHECK_RECEIPT_INTERVAL: number; // in milliseconds
 
-  KYBER_EXT_ADDRESS: String;
-  DAI_ADDRESS: String;
+  KYBER_EXT_ADDRESS: string;
+  DAI_ADDRESS: string;
 
   tokenData: any;
 
   depositAmount: number;
-  depositTokenSymbol: String;
+  depositTokenSymbol: string;
   withdrawAmount: number;
-  withdrawTokenSymbol: String;
+  withdrawTokenSymbol: string;
 
   currencyBalance: BigNumber;
   pDAIBalance: BigNumber;
   interestAccrued: BigNumber;
 
-  constructor(private route: ActivatedRoute, private apollo: Apollo, @Inject(WEB3) private web3: Web3) {
+  constructor(private route: ActivatedRoute, private apollo: Apollo, @Inject(WEB3) public web3: Web3) {
     super();
 
     this.apiKey = "239ccd50-62da-4e2f-aaf4-b33d39a3a0a6";
@@ -262,6 +262,23 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
     }, console.log);
   }
 
+  migrate() {
+    let self = this;
+    this.connect(async (state) => {
+      // initialize contract instance
+      const abi = require('../../assets/abi/Sai2Dai.json');
+      const sai2daiAddress = '0x02c9e4174E9D23BB7619c83Ef5f771fCB1E6FDB8';
+      const contract = new self.web3.eth.Contract(abi, sai2daiAddress);
+
+      // get user pDAI balance
+      const token = self.pcDAI();
+      const pDAIBalance = new BigNumber(await token.methods.balanceOf(state.accountAddress).call()).integerValue().toFixed();
+
+      // submit transaction
+      self.sendTxWithToken(contract.methods.migrate(self.getPoolID(), pDAIBalance), token, sai2daiAddress, pDAIBalance, 2e6,  console.log, console.log, console.log);
+    }, console.log);
+  }
+
   displayCurrencyBalance() {
     let self = this;
     this.connect(async (state) => {
@@ -271,7 +288,7 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
         let data = self.tokenSymbolToData(self.depositTokenSymbol);
         if (!isUndefined(data)) {
           let token = self.ERC20(data.address);
-          self.currencyBalance = new BigNumber(await token.methods.balanceOf(state.accountAddress).call()).div(1e18);
+          self.currencyBalance = new BigNumber(await token.methods.balanceOf(this.state.address).call()).div(new BigNumber(10).pow(data.decimals));
         }
       }
     }, console.log);
@@ -340,10 +357,6 @@ export class PoolComponent extends ApolloEnabled implements OnInit {
   }
 
   async connect(onConnected, onError) {
-    if (!isNullOrUndefined(this.web3.currentProvider) && 'enable' in this.web3.currentProvider) {
-      await this.web3.currentProvider.enable();
-    }
-
     var bncAssistConfig = {
       dappId: this.apiKey,
       networkId: 1,
